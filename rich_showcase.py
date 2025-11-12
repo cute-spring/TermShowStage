@@ -267,7 +267,7 @@ def show_real_time_status():
     """Show Case 10: Real-time status updates"""
     console.rule("[bold blue]Show Case 10: Real-Time Status Updates")
     
-    total_items = 1000
+    total_items = 100
     spinner_chars = ["↻", "→", "↺", "←"]
     
     with Live(console=console, refresh_per_second=10) as live:
