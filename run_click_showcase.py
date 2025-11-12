@@ -85,6 +85,12 @@ def main():
         print("  5. db - 数据库操作")
         print("  6. theme - 主题设置")
         print("  7. show-date - 日期时间演示")
+        print("  8. apply-discount - 折扣计算")
+        print("  9. config-demo - 配置演示")
+        print("  10. log-demo - 日志级别")
+        print("  11. tagging-demo - 标签系统")
+        print("  12. validate-range - 范围验证")
+        print("  13. file-output-demo - 文件输出")
         
         print("\n💡 尝试运行: python run_click_showcase.py --command hello --name World")
         print("💡 或查看帮助: python run_click_showcase.py --command --help")

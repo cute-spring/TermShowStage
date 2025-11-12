@@ -184,5 +184,125 @@ def show_date(date, format):
     formatted = date.strftime(format)
     click.echo(f"📅 日期时间: {formatted}")
 
+# 自定义参数类型示例
+class PercentageParamType(click.ParamType):
+    name = "percentage"
+    
+    def convert(self, value, param, ctx):
+        try:
+            percentage = float(value)
+            if not (0 <= percentage <= 100):
+                self.fail(f"{value} 不是有效的百分比 (0-100)", param, ctx)
+            return percentage
+        except ValueError:
+            self.fail(f"{value} 不是有效的数字", param, ctx)
+
+PERCENTAGE = PercentageParamType()
+
+@cli.command()
+@click.option('--discount', type=PERCENTAGE, default=0, 
+              help='折扣百分比 (0-100)')
+@click.option('--price', type=float, required=True, help='原价')
+def apply_discount(price, discount):
+    """应用折扣 - 自定义参数类型演示"""
+    discounted = price * (1 - discount / 100)
+    click.echo(f"原价: ¥{price:.2f}")
+    click.echo(f"折扣: {discount}%")
+    click.echo(f"折后价: ¥{discounted:.2f}")
+
+# 环境变量支持
+@cli.command()
+@click.option('--api-key', envvar='API_KEY', 
+              help='API密钥 (可从环境变量 API_KEY 获取)')
+@click.option('--config-file', type=click.Path(), 
+              envvar='CONFIG_FILE', default='config.json',
+              help='配置文件路径')
+def config_demo(api_key, config_file):
+    """配置演示 - 环境变量支持"""
+    click.echo(f"API密钥: {api_key or '未设置'}")
+    click.echo(f"配置文件: {config_file}")
+    
+    if not api_key:
+        click.echo("⚠️  警告: API密钥未设置!")
+        click.echo("   可以通过 --api-key 参数或设置 API_KEY 环境变量来提供")
+
+# 上下文设置和状态管理
+@cli.command()
+@click.option('--verbose', '-v', count=True, 
+              help='详细级别 (可多次使用增加详细程度)')
+@click.option('--quiet', '-q', is_flag=True, 
+              help='安静模式')
+def log_demo(verbose, quiet):
+    """日志级别演示 - 上下文计数和标志"""
+    if quiet:
+        click.echo("🔇 安静模式: 仅显示关键信息")
+    elif verbose == 0:
+        click.echo("🔵 普通模式")
+    elif verbose == 1:
+        click.echo("📋 详细模式: 显示基本信息")
+    elif verbose == 2:
+        click.echo("📊 更详细模式: 显示详细信息")
+    else:
+        click.echo(f"🔍 调试模式 (级别 {verbose}): 显示所有信息")
+
+# 多值选项和列表处理
+@cli.command()
+@click.option('--tags', '-t', multiple=True, 
+              help='标签 (可多次使用添加多个标签)')
+@click.option('--categories', '-c', multiple=True, 
+              default=['default'], help='分类')
+def tagging_demo(tags, categories):
+    """标签系统演示 - 多值选项"""
+    click.echo("🏷️  标签:")
+    for i, tag in enumerate(tags, 1):
+        click.echo(f"  {i}. {tag}")
+    
+    click.echo("📁 分类:")
+    for i, category in enumerate(categories, 1):
+        click.echo(f"  {i}. {category}")
+
+# 回调函数和参数验证
+@cli.command()
+@click.option('--min-value', type=int, default=0, 
+              help='最小值')
+@click.option('--max-value', type=int, default=100, 
+              help='最大值')
+@click.option('--value', type=int, required=True, 
+              help='需要验证的值')
+@click.pass_context
+def validate_range(ctx, min_value, max_value, value):
+    """范围验证演示 - 回调函数"""
+    if not (min_value <= value <= max_value):
+        click.echo(f"❌ 错误: 值 {value} 不在范围 [{min_value}, {max_value}] 内")
+        ctx.exit(1)
+    
+    click.echo(f"✅ 验证通过: {value} 在范围 [{min_value}, {max_value}] 内")
+
+# 命令别名和隐藏命令
+@cli.command(hidden=True)
+def secret_command():
+    """隐藏命令 - 不会在帮助中显示"""
+    click.echo("🔒 这是一个隐藏命令!")
+    click.echo("只有知道命令名的人才能使用")
+
+@cli.command()
+@click.option('--output', '-o', type=click.File('w'), 
+              default='-', help='输出文件 (默认: 标准输出)')
+@click.option('--append', '-a', is_flag=True, 
+              help='追加模式 (默认: 覆盖)')
+def file_output_demo(output, append):
+    """文件输出演示 - Click文件类型"""
+    mode = 'a' if append else 'w'
+    message = f"这是{'追加' if append else '写入'}到文件的内容\n"
+    
+    with open(output.name, mode) if output.name != '<stdout>' else output as f:
+        f.write(message)
+    
+    if output.name == '<stdout>':
+        click.echo("📄 内容已输出到标准输出")
+    else:
+        action = "追加到" if append else "写入"
+        click.echo(f"📄 内容已{action}文件: {output.name}")
+
 if __name__ == '__main__':
     cli()
