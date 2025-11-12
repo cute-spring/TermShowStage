@@ -110,6 +110,8 @@ TermShowStage/
 ├── run_basic_showcase.py   # 独立基础展示运行器
 ├── interactive_demo.py     # 高级交互式演示程序
 ├── run_interactive_demo.py # 交互式演示启动器
+├── click_showcase.py       # Click 库功能展示程序
+├── run_click_showcase.py   # Click 展示启动器
 ├── requirements.txt        # 依赖配置
 └── README.md              # 项目文档
 ```
@@ -121,8 +123,54 @@ TermShowStage/
 - **run_basic_showcase.py** - 独立的基础展示运行器，专注于基础功能演示
 - **interactive_demo.py** - 高级交互式演示程序，包含 5 个交互式功能模块
 - **run_interactive_demo.py** - 交互式演示启动器，独立运行高级交互功能
-- **requirements.txt** - 项目依赖配置，仅需 rich>=13.0.0
+- **click_showcase.py** - Click 库功能展示程序，演示命令行接口开发
+- **run_click_showcase.py** - Click 展示启动器，提供依赖检查和运行支持
+- **requirements.txt** - 项目依赖配置，包含 rich 和 click 库
 - **README.md** - 项目文档和使用说明
+
+## 🎯 Click 库功能展示
+
+### 关于 Click 库
+
+Python 的 Click 库是一个优雅的命令行接口（CLI）开发工具，基于装饰器语法，让开发者能快速构建功能完善、交互友好的命令行程序。它自动处理参数解析、帮助信息生成、错误提示等底层工作，支持子命令、参数验证、交互式输入等高级功能。
+
+### 运行 Click 展示
+
+```bash
+# 运行完整的 Click 展示
+python run_click_showcase.py
+
+# 运行特定命令示例
+python run_click_showcase.py --command hello --name Alice --count 3
+python run_click_showcase.py --command calculate 10 20 30 --operation avg
+python run_click_showcase.py --command register
+
+# 仅检查依赖
+python run_click_showcase.py --check-only
+
+# 直接运行 Click 程序
+python click_showcase.py --help
+```
+
+### Click 功能特性
+
+1. **基础命令** - 简单的打招呼命令，演示选项和参数
+2. **数学计算器** - 支持多种计算操作和参数验证
+3. **文件处理器** - 文件操作和路径验证
+4. **用户注册** - 交互式输入和确认提示
+5. **服务器配置** - 复杂选项和默认值设置
+6. **数据库操作** - 子命令组和互斥选项
+7. **主题设置** - 选择器和互斥选项演示
+8. **日期时间** - 高级类型处理和格式化
+
+### 核心功能演示
+
+- **装饰器语法** - 使用 `@click.command()` 和 `@click.option()` 快速构建 CLI
+- **参数验证** - 类型检查、路径存在性验证、选择器限制
+- **交互式输入** - 密码隐藏输入、确认提示、交互式选项
+- **子命令系统** - 命令分组和嵌套命令结构
+- **帮助系统** - 自动生成的帮助信息和文档
+- **错误处理** - 友好的错误提示和异常处理
 
 ## 🔍 案例审查指南
 
