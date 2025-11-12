@@ -66,11 +66,210 @@ python run_interactive_demo.py
 python run_interactive_demo.py --check-only
 ```
 
+### 运行 Click 命令行展示
+
+```bash
+# 运行完整的 Click 展示
+python run_click_showcase.py
+
+# 运行特定命令示例
+python run_click_showcase.py --command hello --name Alice --count 3
+python run_click_showcase.py --command calculate 10 20 30 --operation avg
+python run_click_showcase.py --command register
+
+# 仅检查依赖
+python run_click_showcase.py --check-only
+
+# 直接运行 Click 程序
+python click_showcase.py --help
+```
+
 ### 直接运行主程序
 
 ```bash
 python rich_showcase.py
 ```
+
+## 🎮 如何玩转展示案例
+
+### 基础 Rich 库展示玩法
+
+1. **文本样式探索**：
+   ```bash
+   python rich_showcase.py --show 1
+   ```
+   观察不同的文本格式化效果：颜色、粗体、斜体、下划线等
+
+2. **表格功能测试**：
+   ```bash
+   python rich_showcase.py --show 3
+   python rich_showcase.py --show 4
+   ```
+   查看简单表格和嵌套表格的展示效果
+
+3. **进度条体验**：
+   ```bash
+   python rich_showcase.py --show 5
+   python rich_showcase.py --show 6
+   ```
+   观察单任务和多任务进度条的动画效果
+
+4. **数据可视化**：
+   ```bash
+   python rich_showcase.py --show 7
+   python rich_showcase.py --show 8
+   ```
+   探索文件目录树和 JSON 数据树的结构展示
+
+5. **Markdown 和代码高亮**：
+   ```bash
+   python rich_showcase.py --show 11
+   python rich_showcase.py --show 12
+   ```
+   查看 Markdown 文档渲染和代码语法高亮效果
+
+### 交互式演示玩法
+
+1. **菜单导航体验**：
+   ```bash
+   python run_interactive_demo.py
+   ```
+   使用数字键选择不同的功能模块，体验完整的交互流程
+
+2. **实时数据监控**：
+   - 选择 "实时数据监控" 菜单
+   - 观察 CPU、内存、磁盘使用率的实时更新
+   - 注意状态栏的动态变化
+
+3. **用户管理操作**：
+   - 选择 "用户管理" 菜单
+   - 尝试添加、删除、搜索用户
+   - 观察表格的实时更新效果
+
+4. **表单输入测试**：
+   - 选择 "数据分析" 菜单
+   - 测试各种输入验证（必填字段、数字范围、邮箱格式等）
+   - 观察错误提示和成功反馈
+
+5. **搜索过滤功能**：
+   - 在用户管理或数据分析中
+   - 使用搜索功能过滤数据
+   - 测试实时搜索的响应速度
+
+### Click 命令行展示玩法
+
+#### 基础命令体验
+
+1. **打招呼命令**：
+   ```bash
+   python run_click_showcase.py --command hello --name World --count 5 --uppercase
+   ```
+   尝试不同的名称、次数和大小写选项
+
+2. **数学计算器**：
+   ```bash
+   python run_click_showcase.py --command calculate 1 2 3 4 5 --operation sum
+   python run_click_showcase.py --command calculate 10 20 30 --operation avg
+   python run_click_showcase.py --command calculate 5 10 15 --operation min
+   ```
+   测试不同的数学运算
+
+3. **文件处理**：
+   ```bash
+   python run_click_showcase.py --command file-processor --input-file README.md --output-file test.txt --verbose
+   ```
+   观察文件操作和详细模式输出
+
+#### 交互式功能体验
+
+4. **用户注册**：
+   ```bash
+   python run_click_showcase.py --command register
+   ```
+   按照提示输入用户名、邮箱、密码，体验交互式输入
+
+5. **数据库操作**：
+   ```bash
+   python run_click_showcase.py --command db-create --name mydb --user admin
+   python run_click_showcase.py --command db-delete --name mydb --backup
+   ```
+   体验子命令系统和确认对话框
+
+#### 高级功能探索
+
+6. **环境变量支持**：
+   ```bash
+   API_KEY=secret123 python run_click_showcase.py --command config-demo
+   DEBUG=true python run_click_showcase.py --command config-demo --api-key testkey
+   ```
+   测试环境变量和命令行参数的优先级
+
+7. **多值选项**：
+   ```bash
+   python run_click_showcase.py --command tagging-demo --tags python --tags cli --tags demo --categories dev --categories test
+   ```
+   体验多个标签和分类的处理
+
+8. **参数验证**：
+   ```bash
+   python run_click_showcase.py --command validate-range --min-value 0 --max-value 100 --value 50
+   python run_click_showcase.py --command validate-range --min-value 0 --max-value 100 --value 150
+   ```
+   测试验证通过和验证失败的情况
+
+9. **自定义类型**：
+   ```bash
+   python run_click_showcase.py --command apply-discount --price 200 --discount 25
+   python run_click_showcase.py --command apply-discount --price 100 --discount 150
+   ```
+   测试自定义百分比类型的验证
+
+10. **文件输出**：
+    ```bash
+    python run_click_showcase.py --command file-output-demo --output test.txt
+    python run_click_showcase.py --command file-output-demo --output test.txt --append
+    ```
+    体验文件写入和追加模式
+
+### 趣味挑战任务
+
+1. **创建完整的用户流程**：
+   - 使用注册命令创建用户
+   - 使用数据库命令创建相关数据库
+   - 使用文件处理器处理用户数据
+
+2. **配置服务器环境**：
+   - 设置服务器配置
+   - 配置日志级别
+   - 设置主题样式
+
+3. **批量处理任务**：
+   - 使用多值选项处理多个文件
+   - 批量应用折扣计算
+   - 处理多个数据验证任务
+
+### 调试和学习技巧
+
+1. **使用帮助系统**：
+   ```bash
+   python click_showcase.py --help
+   python click_showcase.py hello --help
+   python click_showcase.py calculate --help
+   ```
+
+2. **查看错误信息**：
+   - 故意输入错误参数观察错误提示
+   - 测试边界情况和异常处理
+
+3. **学习代码结构**：
+   - 查看 `click_showcase.py` 中的装饰器用法
+   - 学习参数验证和类型处理
+   - 研究交互式输入的实现
+
+4. **性能测试**：
+   - 测试大量数据时的性能表现
+   - 观察实时更新的流畅度
+   - 检查内存使用情况
 
 ## 🎯 高级用法
 
