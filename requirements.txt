@@ -1,2 +1,4 @@
 rich>=13.0.0
 click>=8.0.0
+textual>=0.55.0
+prompt-toolkit>=3.0.0
