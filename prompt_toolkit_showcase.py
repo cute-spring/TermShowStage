@@ -57,6 +57,8 @@ from prompt_toolkit.layout.menus import CompletionsMenu
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.validation import Validator, ValidationError
 from pygments.lexers import PythonLexer, JsonLexer, XmlLexer
+from pygments import highlight
+from pygments.formatters import TerminalFormatter
 
 import os
 import time
@@ -125,11 +127,9 @@ class PromptToolkitShowcase:
             print_formatted_text(HTML('<error>\nEnd of input</error>'))
     
     def demo_auto_completion(self):
-        """Demo auto-completion features."""
         print_formatted_text(HTML('<title>🔹 Auto-Completion Demo</title>'))
-        print_formatted_text(HTML('<info>Try typing commands like: git, docker, python, list, show</info>'))
+        print_formatted_text(HTML('<info>1) Command completion  2) Path completion  3) Nested completion</info>'))
         
-        # Create completers
         command_completer = WordCompleter([
             'git', 'docker', 'python', 'node', 'npm',
             'list', 'show', 'create', 'delete', 'update',
@@ -156,13 +156,29 @@ class PromptToolkitShowcase:
         })
         
         try:
-            result = self.session.prompt(
-                HTML('<prompt>❯ </prompt>'),
-                completer=FuzzyCompleter(command_completer),
+            cmd = self.session.prompt(
+                HTML('<prompt>❯ Command: </prompt>'),
+                completer=command_completer,
                 complete_while_typing=True,
                 style=self.style
             )
-            print_formatted_text(HTML(f'<output>Completed: {result}</output>'))
+            print_formatted_text(HTML(f'<output>Command: {cmd}</output>'))
+            
+            p = self.session.prompt(
+                HTML('<prompt>❯ Path: </prompt>'),
+                completer=path_completer,
+                complete_while_typing=True,
+                style=self.style
+            )
+            print_formatted_text(HTML(f'<output>Path: {p}</output>'))
+            
+            nested = self.session.prompt(
+                HTML('<prompt>❯ Nested: </prompt>'),
+                completer=nested_completer,
+                complete_while_typing=True,
+                style=self.style
+            )
+            print_formatted_text(HTML(f'<output>Nested: {nested}</output>'))
         except KeyboardInterrupt:
             print_formatted_text(HTML('<error>\nOperation cancelled</error>'))
     
@@ -287,7 +303,9 @@ class PromptToolkitShowcase:
             height=10
         )
         
-        button = Button("Click Me!", handler=lambda: None)
+        def on_button_click():
+            text_area.buffer.text = text_area.buffer.text + "\n[Button clicked]"
+        button = Button("Click Me!", handler=on_button_click)
         
         radio_list = RadioList(
             values=[
@@ -340,6 +358,9 @@ class PromptToolkitShowcase:
         """Demo history search functionality."""
         print_formatted_text(HTML('<title>🔹 History Search Demo</title>'))
         print_formatted_text(HTML('<info>Use up/down arrows to navigate history</info>'))
+        self.history.append_string("git status")
+        self.history.append_string("docker run -it alpine")
+        self.history.append_string("python app.py")
         
         # Create session with history
         session_with_history = PromptSession(history=self.history)
@@ -479,24 +500,25 @@ class PromptToolkitShowcase:
             print_formatted_text(HTML('=' * 60))
             
             menu_options = [
-                ("1", "Basic Prompt"),
-                ("2", "Auto-Completion"),
-                ("3", "Syntax Highlighting"),
-                ("4", "Input Validation"),
-                ("5", "Dialog Boxes"),
-                ("6", "Progress Bar"),
-                ("7", "Custom Layout"),
-                ("8", "History Search"),
-                ("9", "Fuzzy Matching"),
-                ("10", "Multi-line Input"),
-                ("11", "Auto-Suggest"),
-                ("12", "Password Input"),
-                ("13", "Custom Completer"),
-                ("q", "Quit"),
+                ("0", "Quick Tour", "快速导览所有功能"),
+                ("1", "Basic Prompt", "基础输入与历史"),
+                ("2", "Auto-Completion", "词/路径/嵌套补全"),
+                ("3", "Syntax Highlighting", "Pygments 语法高亮"),
+                ("4", "Input Validation", "邮箱与数字校验"),
+                ("5", "Dialog Boxes", "信息/确认/按钮/输入"),
+                ("6", "Progress Bar", "进度条演示"),
+                ("7", "Custom Layout", "文本区/控件布局"),
+                ("8", "History Search", "历史搜索与导航"),
+                ("9", "Fuzzy Matching", "模糊匹配补全"),
+                ("10", "Multi-line Input", "多行输入与续行"),
+                ("11", "Auto-Suggest", "历史智能建议"),
+                ("12", "Password Input", "密码输入遮罩"),
+                ("13", "Custom Completer", "上下文敏感补全"),
+                ("q", "Quit", "退出"),
             ]
             
-            for key, description in menu_options:
-                print_formatted_text(HTML(f'<prompt>{key}</prompt>. {description}'))
+            for key, title, desc in menu_options:
+                print_formatted_text(HTML(f'<prompt>{key}</prompt>. {title} - {desc}'))
             
             print_formatted_text(HTML('=' * 60))
             
@@ -509,6 +531,8 @@ class PromptToolkitShowcase:
             
                 if choice == 'q':
                     break
+                elif choice == '0':
+                    self.quick_tour()
                 elif choice == '1':
                     self.demo_basic_prompt()
                 elif choice == '2':
@@ -555,6 +579,98 @@ class PromptToolkitShowcase:
             print_formatted_text(HTML('<success>\n🎉 Thank you for exploring Prompt Toolkit!</success>'))
         except Exception as e:
             print_formatted_text(HTML(f'<error>Error: {e}</error>'))
+
+    def quick_tour(self):
+        print_formatted_text(HTML('<title>🚀 Prompt Toolkit 快速导览</title>'))
+        print_formatted_text(HTML('=' * 60))
+        
+        print_formatted_text(HTML('<info>基础输入与历史</info>'))
+        print_formatted_text(HTML('<output>示例: 支持历史记录与样式化提示</output>'))
+        
+        print_formatted_text(HTML('<info>词/路径/嵌套补全</info>'))
+        wc = WordCompleter(['git','docker','status','run','build'], ignore_case=True)
+        pc = PathCompleter()
+        nc = NestedCompleter.from_nested_dict({'git': {'status': None, 'add': None}})
+        wcs = [c.text for c in wc.get_completions(Document('st', cursor_position=2), None)]
+        pcs = [c.text for c in pc.get_completions(Document('~', cursor_position=1), None)][:5]
+        ncs = [c.text for c in nc.get_completions(Document('git ', cursor_position=4), None)]
+        print_formatted_text(HTML(f'<output>词补全: {", ".join(wcs) or "(无)"}</output>'))
+        print_formatted_text(HTML(f'<output>路径补全: {", ".join(pcs) or "(无)"}</output>'))
+        print_formatted_text(HTML(f'<output>嵌套补全: {", ".join(ncs) or "(无)"}</output>'))
+        
+        print_formatted_text(HTML('<info>Pygments 语法高亮</info>'))
+        code = 'def add(a, b):\n    return a + b\n'
+        ansi = highlight(code, PythonLexer(), TerminalFormatter())
+        print_formatted_text(ANSI(ansi))
+        
+        print_formatted_text(HTML('<info>输入校验</info>'))
+        class _EmailV(Validator):
+            def validate(self, d):
+                t = d.text
+                if '@' not in t or '.' not in t.split('@')[-1]:
+                    raise ValidationError(message='邮箱不合法', cursor_position=len(t))
+        try:
+            _EmailV().validate(Document('user@invalid'))
+        except ValidationError:
+            print_formatted_text(HTML('<error>⛔ 错误邮箱: user@invalid</error>'))
+        _EmailV().validate(Document('user@example.com'))
+        print_formatted_text(HTML('<success>✅ 正确邮箱: user@example.com</success>'))
+        
+        print_formatted_text(HTML('<info>对话框</info>'))
+        _ = message_dialog(title='信息', text='示例')
+        _ = yes_no_dialog(title='确认', text='示例')
+        _ = button_dialog(title='按钮', text='示例', buttons=[('OK','ok')])
+        print_formatted_text(HTML('<output>已创建: 信息/确认/按钮 对话框</output>'))
+        
+        print_formatted_text(HTML('<info>进度条</info>'))
+        with ProgressBar() as pb:
+            for _ in pb(range(20), label='Tour'):
+                time.sleep(0.005)
+        
+        print_formatted_text(HTML('<info>自定义布局</info>'))
+        ta = TextArea(text='示例', multiline=True, height=3)
+        lay = Layout(HSplit([Frame(title='编辑器', body=ta, height=4)]))
+        _ = Application(layout=lay, key_bindings=self.kb, style=self.style, full_screen=False)
+        print_formatted_text(HTML('<output>布局构建完成</output>'))
+        
+        print_formatted_text(HTML('<info>历史搜索与导航</info>'))
+        self.history.append_string('git status')
+        self.history.append_string('docker ps')
+        self.history.append_string('python main.py')
+        print_formatted_text(HTML('<output>历史已预置: git status, docker ps, python main.py</output>'))
+        
+        print_formatted_text(HTML('<info>模糊匹配补全</info>'))
+        fz = FuzzyCompleter(WordCompleter(['python','docker','status','start']))
+        fzs = [c.text for c in fz.get_completions(Document('st', cursor_position=2), None)]
+        print_formatted_text(HTML(f'<output>模糊匹配: {", ".join(fzs) or "(无)"}</output>'))
+        
+        print_formatted_text(HTML('<info>多行输入与续行</info>'))
+        ml = 'line1\nline2\nline3'
+        print_formatted_text(HTML(f'<output>示例:\n{ml}</output>'))
+        
+        print_formatted_text(HTML('<info>历史智能建议</info>'))
+        mem_hist = InMemoryHistory()
+        mem_hist.append_string('print("hello")')
+        sug = AutoSuggestFromHistory()
+        buf = Buffer(history=mem_hist)
+        s = sug.get_suggestion(buf, Document('pri', cursor_position=3))
+        print_formatted_text(HTML(f'<output>建议: {(s.text if s else "(无)")}</output>'))
+        
+        print_formatted_text(HTML('<info>密码输入遮罩</info>'))
+        print_formatted_text(HTML('<output>示例: ******</output>'))
+        
+        print_formatted_text(HTML('<info>上下文敏感补全</info>'))
+        class _Ctx(Completer):
+            def get_completions(self, document, ce):
+                t = document.text_before_cursor
+                if t.startswith('git '):
+                    for c in ['status','add','commit']:
+                        yield Completion(c, start_position=0)
+        ctx = _Ctx()
+        ctxs = [c.text for c in ctx.get_completions(Document('git ', cursor_position=4), None)]
+        print_formatted_text(HTML(f'<output>上下文补全: {", ".join(ctxs) or "(无)"}</output>'))
+        
+        print_formatted_text(HTML('<success>🎉 快速导览完成</success>'))
 
     def self_test_all(self):
         """Run non-interactive self-tests to verify APIs without blocking input."""

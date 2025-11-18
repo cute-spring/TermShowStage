@@ -19,6 +19,7 @@ try:
         """Main function to run the showcase."""
         parser = argparse.ArgumentParser(description="Prompt Toolkit Showcase Runner")
         parser.add_argument("--self-test-all", action="store_true", help="Run non-interactive self-tests for all demos")
+        parser.add_argument("--quick-tour", action="store_true", help="Run a non-interactive quick tour of features")
         args = parser.parse_args()
 
         print("🚀 Starting Prompt Toolkit Showcase...")
@@ -27,6 +28,8 @@ try:
         showcase = PromptToolkitShowcase()
         if args.self_test_all:
             showcase.self_test_all()
+        elif args.quick_tour:
+            showcase.quick_tour()
         else:
             showcase.run()
         

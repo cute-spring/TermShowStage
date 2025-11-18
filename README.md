@@ -94,6 +94,35 @@ python run_click_showcase.py --check-only
 python click_showcase.py --help
 ```
 
+#### 交互式选择与数字快捷命令
+
+现在支持通过编号快速选择案例，无需记忆命令名：
+
+```bash
+# 交互式选择菜单（输入编号 1–13）
+python run_click_showcase.py
+
+# 数字快捷命令（直接按编号运行）
+python run_click_showcase.py --command 1   # hello 示例
+python run_click_showcase.py --command 10  # log-demo 示例
+```
+
+编号与示例映射：
+
+- 1: `hello`
+- 2: `calculate`
+- 3: `register`
+- 4: `server`
+- 5: `db create`
+- 6: `theme`
+- 7: `show-date`
+- 8: `apply-discount`
+- 9: `config-demo`
+- 10: `log-demo`
+- 11: `tagging-demo`
+- 12: `validate-range`
+- 13: `file-output-demo`
+
 ### 运行 Textual 展示
 
 ```bash
@@ -112,6 +141,12 @@ python run_prompt_toolkit_showcase.py
 
 # 若依赖缺失，请先安装
 pip install -r requirements.txt
+
+# 快速导览（非交互，概览所有特性）
+python run_prompt_toolkit_showcase.py --quick-tour
+
+# 自测模式（非交互，验证各 API）
+python run_prompt_toolkit_showcase.py --self-test-all
 ```
 
 ### 直接运行主程序
@@ -389,6 +424,13 @@ python run_click_showcase.py --check-only
 python click_showcase.py --help
 ```
 
+提示：可以使用交互式菜单或数字快捷命令快速运行案例，例如：
+
+```bash
+python run_click_showcase.py             # 进入交互式菜单并输入编号
+python run_click_showcase.py --command 2 # 直接运行 calculate 示例
+```
+
 ### Click 功能特性
 
 1. **基础命令** - 简单的打招呼命令，演示选项和参数
@@ -532,10 +574,19 @@ python click_showcase.py --help
 
 > 体验入口：
 > - 交互模式：`python run_prompt_toolkit_showcase.py`
+> - 快速导览：`python run_prompt_toolkit_showcase.py --quick-tour`
 > - 自测模式：`python run_prompt_toolkit_showcase.py --self-test-all`
 
+### 0. Quick Tour 快速导览
+- 解释：一次性以非交互方式概览核心特性与输出示例（补全、语法高亮、验证、对话框、进度条、布局、历史/建议、模糊匹配、多行输入、上下文补全等）。
+- 目的：用最短时间建立对 Prompt Toolkit 的整体认知，便于快速上手。
+- 如何体验：`python run_prompt_toolkit_showcase.py --quick-tour`，或在菜单选择 `0. Quick Tour`。
+
 ### 2. Auto-Completion 自动补全
-- 解释：基于 `Completer` 与 `NestedCompleter.from_nested_dict` 提供层级化命令建议（如 `git add`、`docker run`）。
+- 解释：包含三类补全演示：
+- 词补全：`WordCompleter` 提供命令/词条的精确匹配建议。
+- 路径补全：`PathCompleter` 提供文件系统路径建议。
+- 嵌套补全：`NestedCompleter.from_nested_dict` 提供层级化子命令建议（如 `git add`、`docker run`）。
 - 目的：降低输入成本与记忆负担，帮助用户快速发现可用命令与子命令。
 - 价值：提升工作效率与命令可发现性，减少拼写错误与参数遗漏。
 - 典型场景：CLI 管理工具、交互式控制台、运维脚本。
@@ -590,6 +641,11 @@ python click_showcase.py --help
 - 典型场景：命令/文件/选项选择器、搜索框。
 - 如何体验：交互菜单选择“Fuzzy Matching”。
 
+### 13+. Custom Completer 上下文敏感补全
+- 解释：实现 `Completer` 接口的上下文敏感补全，基于输入前缀提供不同域的候选（如以 `git ` 开头给出 `status`、`add`、`commit`）。
+- 目的：将业务语义融入补全系统，提升候选的相关性与专业度。
+- 如何体验：交互菜单选择“Custom Completer”。
+
 ### 10. Multi-line Input 多行输入
 - 解释：通过 `Buffer` 配置与会话控制支持多行编辑（如换行、缩进、整体提交）。
 - 目的：在终端中处理长文本、脚本片段或结构化输入。
@@ -619,6 +675,67 @@ python click_showcase.py --help
 - 如何体验：交互菜单选择“Custom Completer”，或运行自测模式查看验证输出。
 
 > 说明：以上所有演示已通过自测模式验证（`--self-test-all`），并针对 API 变更进行了适配（如 `NestedCompleter.from_nested_dict`、`ProgressBar` 替换、`AutoSuggestFromHistory.get_suggestion` 规范签名）。
+
+## 📚 更多人机交互开源库参考（除 Rich/Click/Prompt Toolkit）
+
+### 终端 TUI
+- Textual — 现代终端 UI 框架，组件化、样式类 CSS，适合多屏导航与状态管理；`pip install textual`
+- Urwid — 成熟稳定的 TUI 控件与事件循环，适合复杂表单与列表
+- Asciimatics — 终端动画、表单与鼠标支持，适合仪表盘与演示效果
+- PyTermGUI — 现代感 TUI，强调美观与易用，适合中小型终端应用
+- Blessed/Blessings — 终端能力封装（颜色、光标、窗口大小），可作底层垫片
+
+### CLI 构建
+- Typer — 基于类型注解的 CLI（底层 Click），极少样板；`pip install typer`
+- Docopt — 用“Usage”字符串定义参数，快速把用法变成解析器
+- Google Fire — 直接把任意 Python 对象变成 CLI，原型最快
+- Cement — 完整 CLI 应用框架（插件、日志、配置、测试），适合大型工具
+- Cleo — Poetry 同款命令框架，命令/任务模型清晰
+- Cloup — Click 增强（参数分组、约束更清晰），复杂 CLI 的帮助更规范
+
+### 交互式提示/选择
+- InquirerPy — 现代交互式问答与选择（列表、复选、自动补全、异步加载）；`pip install InquirerPy`
+- Questionary — 基于 Prompt Toolkit 的交互式提示，轻量易用
+- simple-term-menu — 简洁的终端选择菜单，超轻量
+- bullet — 列表、复选的交互式提示，配置简单
+- Pyfzf — 结合 `fzf` 做模糊选择（终端内高效搜索）
+
+### 终端视觉反馈
+- tqdm — 进度条标准解，迭代器即用；`pip install tqdm`
+- alive-progress — 丝滑动画进度条，动态速率与估算更自然
+- yaspin — 终端转圈指示器，适合等待过程；`pip install yaspin`
+- colorama/termcolor — 跨平台终端颜色支持；Windows 兼容好
+- loguru — 更友好的日志 API（级别、结构化、旋转），替代标准 logging
+
+### Web 交互快速原型
+- Streamlit — 纯 Python 快速搭建数据/工具 Web；`pip install streamlit`
+- Gradio — 机器学习/推理 demo 的表单式 Web 前端；`pip install gradio`
+- Panel — Holoviz 生态的仪表盘与应用，灵活可扩展
+- Dash — Plotly 驱动的分析型应用，企业风格组件丰富
+
+### 桌面 GUI
+- Gooey — 自动把 argparse CLI 变 GUI；`pip install Gooey`
+- PySimpleGUI — 简单 API 快速做表单与窗口；`pip install PySimpleGUI`
+- PySide6/PyQt5 — 完整桌面 UI 框架，组件生态深厚
+- Kivy — 跨平台（桌面+移动），适合触控与多媒体
+- DearPyGui — 即时模式 GUI，适合内工具与编辑器类应用
+
+### 增强与配套
+- argcomplete — 为 argparse 提供 Shell 自动补全
+- rich-click — 用 Rich 美化 Click 的帮助与输出
+- termgraph/asciichartpy — 终端内画图（条形图、折线图）
+
+### 选型建议
+- 全屏终端应用 → Textual 或 Urwid
+- 快速建 CLI → Typer 或 Fire；已有 Click 可用 Cloup/rich-click 增强
+- 交互式选择与表单 → InquirerPy 或 Questionary（Prompt Toolkit 生态）
+- Web 展示/收集输入 → Streamlit 或 Gradio
+- 把现有 CLI 变 GUI → Gooey
+- 进度与反馈 → tqdm/alive-progress + yaspin +（可选）Rich 配色
+
+### 推荐组合
+- `Typer + InquirerPy + tqdm/alive-progress + yaspin + Rich`
+  在保持开发效率的同时，交互友好度与视觉反馈皆佳。
 
 ## 📄 许可证
 
